@@ -93,5 +93,7 @@ To schedule the script to run daily at 9 AM, add the following line to your cron
 0 9 * * * /usr/bin/python3 /path/to/your/script.py
 
 Note:
+
 Make sure to handle any sensitive information carefully (like email passwords).
+
 Adjust the error handling and logging as needed for your use case.
