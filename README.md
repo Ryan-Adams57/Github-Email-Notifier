@@ -84,6 +84,7 @@ Instructions:
 2. Schedule the script to run daily:
 
 On Windows, you can use Task Scheduler.
+
 On Unix-based systems, you can use cron.
 
 Example Cron Job.
