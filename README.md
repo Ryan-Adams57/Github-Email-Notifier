@@ -14,7 +14,7 @@ pip install requests
 
 Python Script:
 
-import smtplib
+(import smtplib
 import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -75,7 +75,7 @@ def main():
     send_email(report)
 
 if __name__ == "__main__":
-    main()
+    main())
 
 Instructions:
 
