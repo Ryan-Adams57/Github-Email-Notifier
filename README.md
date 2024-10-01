@@ -1,4 +1,4 @@
-# Github-Email-Notifier
+# Python-Email-Notifier
 
 Repo Activity Emailers Using Python.
 
