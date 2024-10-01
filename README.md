@@ -36,7 +36,7 @@ def fetch_github_activities():
     start_date = end_date - timedelta(days=1)
     url = f'https://api.github.com/repos/{GITHUB_USERNAME}/{GITHUB_REPO}/events'
     response = requests.get(url)
-    
+
     if response.status_code != 200:
         return f"Error fetching data: {response.status_code}"
 
