@@ -6,6 +6,7 @@ You need to install the schedule library if you don't have it yet. You can do th
 pip install schedule
 
 Step 2: Create the Email Script.
+
 Here’s a basic script that sends a daily email report:
 
 import smtplib
@@ -75,8 +76,11 @@ Linux: Use cron to schedule the script. Edit your crontab by running crontab -e 
 @reboot /usr/bin/python3 /path/to/your/daily_email_report.py
 
 Security Considerations
+
 Credentials: Avoid hardcoding sensitive credentials. Consider using environment variables or a configuration file.
+
 Email Limits: Check your email provider’s sending limits to avoid being temporarily blocked.
 
 Final Note
+
 Feel free to expand the functionality of the email body, such as attaching files, generating dynamic content, or pulling data from a database.
