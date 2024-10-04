@@ -1,100 +1,82 @@
-# Python-Email-Notifier
+Automating daily email reports in Python can be done using the smtplib library for sending emails and schedule for scheduling tasks. Below, I’ll provide a sample script and walk you through the setup.
 
-Repo Activity Emailers Using Python.
+Step 1: Install Required Packages.
+You need to install the schedule library if you don't have it yet. You can do this via pip:
 
-Below is a Python script that automates sending daily email reports about your GitHub repository's activities. This script will use the smtplib library to send emails and the requests library to fetch GitHub data.
+pip install schedule
 
-Requirements.
-
-1. Install the necessary libraries:
-
-pip install requests
-
-2. Make sure to enable "Less secure app access" if you're using Gmail (or consider using an App Password with 2FA).
-
-Python Script:
+Step 2: Create the Email Script.
+Here’s a basic script that sends a daily email report:
 
 import smtplib
-import requests
-from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from datetime import datetime, timedelta
+from email.mime.text import MIMEText
+import schedule
+import time
 
-# Configuration
-GITHUB_USERNAME = 'your_github_username'
-GITHUB_REPO = 'your_github_repo'
-EMAIL_SENDER = 'your_email@example.com'
-EMAIL_RECEIVER = 'recipient_email@example.com'
-EMAIL_SUBJECT = f'Daily Report for {GITHUB_REPO}'
-SMTP_SERVER = 'smtp.gmail.com'
-SMTP_PORT = 587
-EMAIL_PASSWORD = 'your_email_password'  # Use App Password if 2FA is enabled
+def send_email_report():
+    # Email configuration
+    sender_email = "your_email@example.com"
+    receiver_email = "recipient@example.com"
+    subject = "Daily Report"
+    body = "This is your daily report."
 
-# Function to fetch GitHub repository activities
-def fetch_github_activities():
-    end_date = datetime.now()
-    start_date = end_date - timedelta(days=1)
-    url = f'https://api.github.com/repos/{GITHUB_USERNAME}/{GITHUB_REPO}/events'
-    response = requests.get(url)
-
-    if response.status_code != 200:
-        return f"Error fetching data: {response.status_code}"
-
-    events = response.json()
-    report = []
-
-    for event in events:
-        created_at = datetime.strptime(event['created_at'], '%Y-%m-%dT%H:%M:%SZ')
-        if start_date <= created_at <= end_date:
-            report.append(f"{event['type']} by {event['actor']['login']} at {event['created_at']}")
-
-    return "\n".join(report) if report else "No activities found."
-
-# Function to send email
-def send_email(report):
+    # Create the email
     msg = MIMEMultipart()
-    msg['From'] = EMAIL_SENDER
-    msg['To'] = EMAIL_RECEIVER
-    msg['Subject'] = EMAIL_SUBJECT
-
-    body = f"Daily activities report for {GITHUB_REPO}:\n\n{report}"
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+    msg['Subject'] = subject
     msg.attach(MIMEText(body, 'plain'))
 
+    # Connect to the SMTP server
     try:
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            server.starttls()
-            server.login(EMAIL_SENDER, EMAIL_PASSWORD)
-            server.send_message(msg)
-        print("Email sent successfully.")
+        server = smtplib.SMTP('smtp.example.com', 587)  # Use the SMTP server of your email provider
+        server.starttls()
+        server.login(sender_email, 'your_password')  # Use your email password
+        server.send_message(msg)
+        print("Email sent successfully!")
     except Exception as e:
-        print(f"Error sending email: {e}")
+        print(f"Failed to send email: {e}")
+    finally:
+        server.quit()
 
-# Main function
-def main():
-    report = fetch_github_activities()
-    send_email(report)
+# Schedule the email to be sent every day at 8 AM
+schedule.every().day.at("08:00").do(send_email_report)
 
-if __name__ == "__main__":
-    main()
+# Keep the script running
+while True:
+    schedule.run_pending()
+    time.sleep(1)
 
-Instructions:
 
-1. Replace the placeholders in the configuration section (GITHUB_USERNAME, GITHUB_REPO, EMAIL_SENDER, EMAIL_RECEIVER, and EMAIL_PASSWORD) with your actual values.
+Step 3: Modify the Script.
 
-2. Schedule the script to run daily:
+Update Email Configuration: Replace your_email@example.com, recipient@example.com, and smtp.example.com with your actual email address, the recipient's address, and your email provider's SMTP server.
+Login Credentials: Replace 'your_password' with the actual password of your email account. For security reasons, consider using an application-specific password if your email provider supports it.
+Email Content: Modify the subject and body variables as per your reporting requirements.
 
-On Windows, you can use Task Scheduler.
+Step 4: Running the Script
+Save the Script: Save the code to a file, for example, daily_email_report.py.
 
-On Unix-based systems, you can use cron.
+Run the Script: Open your terminal (or command prompt) and run the script:
 
-Example Cron Job.
+python daily_email_report.py
 
-To schedule the script to run daily at 9 AM, add the following line to your crontab (crontab -e):
+Keep it Running: Make sure your script keeps running. You can use tools like screen or tmux on Linux, or run it in the background on Windows.
 
-0 9 * * * /usr/bin/python3 /path/to/your/script.py
+Step 5: Automate Script Execution (Optional)
 
-Note:
+If you want to run this script automatically without keeping a terminal open, you can schedule it using a task scheduler.
 
-Make sure to handle any sensitive information carefully (like email passwords).
+Windows: Use Task Scheduler to create a new task that runs the script at startup or on a schedule.
 
-Adjust the error handling and logging as needed for your use case.
+Linux: Use cron to schedule the script. Edit your crontab by running crontab -e and add a line like this to run it at 8 AM:
+
+@reboot /usr/bin/python3 /path/to/your/daily_email_report.py
+
+Security Considerations
+Credentials: Avoid hardcoding sensitive credentials. Consider using environment variables or a configuration file.
+Email Limits: Check your email provider’s sending limits to avoid being temporarily blocked.
+
+Final Note
+Feel free to expand the functionality of the email body, such as attaching files, generating dynamic content, or pulling data from a database.
